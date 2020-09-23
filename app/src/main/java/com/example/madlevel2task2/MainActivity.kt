@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.madlevel2task2.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_question.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,9 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding.rvQuestions.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         for (i in Question.QUESTIONS.indices){
-            questions.add(Question(Question.QUESTIONS[i]))
+            questions.add(Question(Question.QUESTIONS[i], Question.ANSWERS[i]))
         }
         questionAdapter.notifyDataSetChanged()
+
+        swipeLeftHelper().attachToRecyclerView(rvQuestions)
+        swipeRightHelper().attachToRecyclerView(rvQuestions)
     }
 
     private fun swipeLeftHelper(): ItemTouchHelper{
@@ -40,11 +46,20 @@ class MainActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                TODO("Not yet implemented")
+                return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                TODO("Not yet implemented")
+                val position = viewHolder.adapterPosition
+                if (!questions[position].questionAnswer){ //correct
+                    Snackbar.make(txtQuestion, "Correctly answered!", Snackbar.LENGTH_SHORT).show()
+                    questions.removeAt(position)
+                    questionAdapter.notifyDataSetChanged()
+                }
+                else{
+                    Snackbar.make(txtQuestion, "Incorrect, question wont be removed!", Snackbar.LENGTH_SHORT).show()
+                    questionAdapter.notifyDataSetChanged()
+                }
             }
         }
         return ItemTouchHelper(callback)
@@ -58,11 +73,20 @@ class MainActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                TODO("Not yet implemented")
+                return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                TODO("Not yet implemented")
+                val position = viewHolder.adapterPosition
+                if (questions[position].questionAnswer){ //correct
+                    Snackbar.make(txtQuestion, "Correctly answered!", Snackbar.LENGTH_SHORT).show()
+                    questions.removeAt(position)
+                    questionAdapter.notifyDataSetChanged()
+                }
+                else{
+                    Snackbar.make(txtQuestion, "Incorrect, question wont be removed!", Snackbar.LENGTH_SHORT).show()
+                    questionAdapter.notifyDataSetChanged()
+                }
             }
         }
         return ItemTouchHelper(callback)
